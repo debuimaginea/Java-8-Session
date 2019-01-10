@@ -1,0 +1,996 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title></title>
+  <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../../elements/codelab.html">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <style is="custom-style">
+    body {
+      font-family: "Roboto",sans-serif;
+      background: var(--google-codelab-background, #F8F9FA);
+    }
+  </style>
+  
+</head>
+<body unresolved class="fullbleed">
+
+  <google-codelab title=""
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Java 8 : Session - I" duration="0">
+        <p>In this session we will learn and cover the concept of Interface changes , Functional Interface and inbuilt functional interfaces introduces in Java 8, Lambda expression and method reference.</p>
+<h3>Objective : </h3>
+<p>Familiar and Hands on with Java-8 features.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Session Overview:" duration="0">
+        <p>Java 8 was released in early 2014. In java 8, most talked about feature was <strong>lambda expressions</strong>. It has many other important features as well such as stream API, <strong>default methods</strong>, <strong>functional interfaces</strong> , <strong>Method References</strong>,Type annotation , repeating annotation, Optional, Predicate, Base64 encoding/Decoding, Security changes, JVM enhancement, Concurrency &amp; Collection API improvement and new date/time API. Let&#39;s hand dirty with java 8 features.<br></p>
+<ul>
+<li><strong>Default methods</strong> enable new functionality to be added to the interfaces of libraries and ensure binary ( backward )  compatibility with code written for older versions of those interfaces.</li>
+<li><strong>Functional interfaces</strong> is an interface that contains only single abstract method <strong>( SAM ) . </strong>They can have only one functionality to exhibit.From Java 8 onwards, <strong>lambda expressions</strong> can be used to represent the instance of a functional interface.</li>
+<li><strong>Lambda Expressions</strong>, a new language feature, has been introduced in this release. They enable you to treat functionality as a method argument, or code as data. Lambda expressions let you express instances of single-method interfaces (referred to as functional interfaces) more compactly.</li>
+<li><strong>Method references</strong> provide easy-to-read lambda expressions for methods that already have a name.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Interface Changes : Default and Static Methods:" duration="0">
+        <p><strong>Introduction :</strong> Designing interfaces have always been a tough job because if we want to add additional methods in the interfaces, it will require change in all the implementing classes. As interface grows old, the number of classes implementing it might grow to an extent that it&#39;s not possible to extend interfaces. That&#39;s why when designing an application, most of the frameworks provide a base implementation class and then we extend it and override methods that are applicable for our application.<br>Let&#39;s look into the default interface methods and static interface methods and the reasoning of their introduction in Java 8 interface changes.</p>
+<h3>Default method</h3>
+<p><br>Before Java 8, interfaces could have only abstract methods and interface was 100% abstract. There should not be any concrete method and all the data member ( <strong>Variables </strong>) was by default<strong> public static final</strong>.The implementation of these methods has to be provided in a separate class. So, if a new method is to be added in an interface, then its implementation code has to be provided in the class implementing the same interface. To overcome this issue, Java 8 has introduced the concept of default methods which allow the interfaces to have methods with implementation without affecting the classes that implement the interface.<br><strong>Please note : </strong>After java 8, implicitly there is no difference between abstract class and interface, As interface is similar to abstract class, i.e - 0% to 100% abstract.<br><br><strong>Why default methods were included in the Java 8 release ?<br>They allow us to add new methods to an interface that are automatically availabl</strong>e in the implementations. Thus, there&#39;s no need to modify the implementing classes.<br>In this way, <strong>backward compatibility</strong> is neatly preserved without having to refactor the implementers.<br><br><strong>Please note : </strong>default methods are implicitly public — there&#39;s no need to specify the public modifier.<br><br><strong>Syntax/Declaration :</strong> they are declared with the default keyword at the beginning of the method signature, and they provide an implementation.<br>Let&#39;s see a simple example:</p>
+<pre>public interface MyInterface {
+           // regular interface methods
+          default void defaultMethod() {
+          // default method implementation
+    }
+}</pre>
+<p><strong>Use Case / Example :</strong></p>
+<pre> public interface Vehicle {
+
+      String getBrand();    // This is abstract method
+      String speedUp();      // This is abstract method
+      String slowDown();     // This is abstract method
+      // Below two methods are default method
+      default String turnAlarmOn() {
+                 return &#34;Turning the vehicle alarm on.&#34;;
+        }
+      default String turnAlarmOff() {
+           return &#34;Turning the vehicle alarm off.&#34;;
+ }
+}
+
+public class Car implements Vehicle { 
+    private String brand;     
+    // constructors/getters     
+    @Override
+    public String getBrand() {
+        return brand;
+    }   
+    @Override
+    public String speedUp() {
+        return &#34;The car is speeding up.&#34;;
+    }     
+    @Override
+    public String slowDown() {
+        return &#34;The car is slowing down.&#34;;
+    }
+/* Don&#39;t need to override default method, as automatically available in this class. But if we want, we can override default method */
+}</pre>
+<p><br>Lastly, let&#39;s define a typical main class, which creates an instance of Car and calls its methods:</p>
+<pre>public static void main(String[] args) {
+    Vehicle car = new Car(&#34;BMW&#34;);
+    System.out.println(car.getBrand());
+    System.out.println(car.speedUp());
+    System.out.println(car.slowDown());
+    System.out.println(car.turnAlarmOn());
+    System.out.println(car.turnAlarmOff());
+}</pre>
+<p><br>Please notice how the default methods <strong>turnAlarmOn() </strong>and <strong>turnAlarmOff() </strong>from our <strong>Vehicle interface</strong> are <strong>automatically available in the Car class</strong>.</p>
+<p>Furthermore, if at some point we decide to add more default methods to the <strong>Vehicle </strong>interface, the application will still continue working, and we won&#39;t have to force the class to provide implementations for the new methods.</p>
+<p>The most typical use of default methods in interfaces <strong>is to incrementally provide additional functionality to a given type without breaking down the implementing classes.</strong></p>
+<p>In addition, <strong>they can be used to provide additional functionality around an existing abstract method:<br>Please Note:</strong> We can override default method in the implementation class. But we can&#39;t do static method.</p>
+<p><strong>Below Example shows that:</strong></p>
+<pre>public interface Vehicle {     
+    // additional interface methods     
+    double getSpeed();     
+    default double getSpeedInKMH(double speed) {
+       // conversion          
+    }
+}</pre>
+<p><strong>Problem for default method in interface ( Diamond Problem) </strong>:<br>Default interface methods are a pretty nice feature indeed, but with some caveats worth mentioning. Since Java allows classes to implement multiple interfaces, it&#39;s important to know <strong>what happens when a class implements several interfaces that define the same default methods.<br></strong>To better understand this scenario, let&#39;s define a new <strong>Alarm </strong>interface and refactor the <strong>Car </strong>class:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><code>public interface Alarm {</code><br> <br>    <code>default String turnAlarmOn() {</code><br>        <code>return &#34;Turning the alarm on.&#34;;</code><br>    <code>}</code><br>     <br>    <code>default String turnAlarmOff() {</code><br>        <code>return &#34;Turning the alarm off.&#34;;</code><br>    <code>}</code><br><code>}</code></p>
+</td></tr>
+</table>
+<p><br>With this new interface defining its own set of default methods, the Car class would implement both Vehicle and Alarm:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong><code>public</code></strong><code> </code><strong><code>class</code></strong><code> </code><strong><code>Car</code></strong><code> </code><strong><code>implements</code></strong><code> </code><strong><code>Vehicle</code></strong><code>, </code><strong><code>Alarm</code></strong><code> {</code><br>    <code>// ...</code><br><code>}</code></p>
+</td></tr>
+</table>
+<p><br>In this case, the code simply won&#39;t compile, as t<strong>here&#39;s a conflict caused by multiple interface inheritance</strong> ( the <strong>Diamond Problem</strong>). The Car class would inherit both sets of default methods. Which ones should be called then?</p>
+<p><strong>To solve this ambiguity, we must explicitly provide an implementation for the methods and needs to call using super keyword:</strong></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><code>@Override</code><br><strong><code>public</code></strong><code> String </code><strong><code>turnAlarmOn</code></strong><code>() {</code><br>    <code>// custom implementation</code><br>    <code>Interface_name.</code><strong><code>super</code></strong><code>.default_method_name();</code><br><code>}</code>   <br><code>@Override</code><br><strong><code>public</code></strong><code> String </code><strong><code>turnAlarmOff</code></strong><code>() {</code><br>    <code>// custom implementation</code><br><code>Interface_name.</code><strong><code>super</code></strong><code>.default_method_name();</code><br><code>}</code></p>
+</td></tr>
+</table>
+<p><br>We can also <strong>have our class use the default methods of one of the interfaces.</strong></p>
+<p>Let&#39;s see an example that uses the default methods from the Vehicle interface:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><code>@Override</code><br><strong><code>public</code></strong><code> String </code><strong><code>turnAlarmOn</code></strong><code>() {</code><br>    <strong><code>return</code></strong><code> Vehicle.</code><strong><code>super</code></strong><code>.turnAlarmOn();</code><br><code>}</code><br> <br><code>@Override</code><br><strong><code>public</code></strong><code> String </code><strong><code>turnAlarmOff</code></strong><code>() {</code><br>    <strong><code>return</code></strong><code> Vehicle.</code><strong><code>super</code></strong><code>.turnAlarmOff();</code><br><code>}</code></p>
+</td></tr>
+</table>
+<p><br>Similarly, we can have the class use the default methods defined within the Alarm interface:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><code>@Override</code><br><strong><code>public</code></strong><code> String </code><strong><code>turnAlarmOn</code></strong><code>() {</code><br>    <strong><code>return</code></strong><code> Alarm.</code><strong><code>super</code></strong><code>.turnAlarmOn();</code><br><code>}</code><br> <br><code>@Override</code><br><strong><code>public</code></strong><code> String </code><strong><code>turnAlarmOff</code></strong><code>() {</code><br>    <strong><code>return</code></strong><code> Alarm.</code><strong><code>super</code></strong><code>.turnAlarmOff();</code><br><code>}</code></p>
+</td></tr>
+</table>
+<p><br>Furthermore, it&#39;s even<strong> possible to make the Car class use both sets of default methods:</strong></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><code>@Override</code><br><strong><code>public</code></strong><code> String </code><strong><code>turnAlarmOn</code></strong><code>() {</code><br>    <strong><code>return</code></strong><code> Vehicle.</code><strong><code>super</code></strong><code>.turnAlarmOn() + &#34; &#34; + Alarm.</code><strong><code>super</code></strong><code>.turnAlarmOn();</code><br><code>}</code>     <br><code>@Override</code><br><strong><code>public</code></strong><code> String </code><strong><code>turnAlarmOff</code></strong><code>() {</code><br>    <strong><code>return</code></strong><code> Vehicle.</code><strong><code>super</code></strong><code>.turnAlarmOff() + &#34; &#34; + Alarm.</code><strong><code>super</code></strong><code>.turnAlarmOff();</code></p>
+</td></tr>
+</table>
+<p><strong>Please note:</strong> Default methods are also known as <strong>defender methods </strong>or <strong>virtual extension methods</strong>.</p>
+<h3>Static Method</h3>
+<p>The interfaces can have static methods as well which is similar to static method of classes.<br>Since static methods don&#39;t belong to a particular object, they are not part of the API of the classes implementing the interface, and they have to be <strong>called by using the interface name preceding the method name.<br></strong>Java interface static method is similar to default method except that we can&#39;t override them in the implementation classes. This feature helps us in avoiding undesired results incase of poor implementation in implementation classes. <br><br><strong>Use Case of static Method :</strong> Java interface static methods are good for providing utility methods, for example null check, collection sorting etc.<br>Java interface static method helps us in providing security by not allowing implementation classes to override them.<br>We can use java interface static methods to remove utility classes such as Collections and move all of it&#39;s static methods to the corresponding interface, that would be easy to find and use.<br></p>
+<pre>public interface Vehicle {     
+    // regular and default interface&#39;s methods    
+   // Declare static method in the interface and return type is int 
+   public static int getHorsePower(int rpm, int torque) {
+        return (rpm * torque) / 5252;
+    }
+}</pre>
+<p><strong>Please Note: Defining a static method within an interface is identical to defining one in a class</strong>. Moreover, a static method can be invoked within other static and default methods.<br>Now, say that we want to calculate the <strong>horsepower </strong>of a given vehicle&#39;s engine. We just call the <strong>getHorsePower()</strong> method:</p>
+<pre>Vehicle.getHorsePower(2500, 480)); // interface_name.static_method_name();</pre>
+<p><br>Pretty much the same can be done with abstract classes. The main difference lies in the fact that abstract classes can have constructors, state, and behavior.<br><strong>Furthermore, </strong>static methods in interfaces make possible to group related utility methods, without having to create artificial utility classes that are simply placeholders for static methods.<br><strong>Example : </strong></p>
+<pre>// A simple program to TestClass demonstrate static
+// methods in java
+interface TestInterface
+{
+    // abstract method
+    public void square (int a);
+  
+    // static method
+    static void show()
+    {
+        System.out.println(&#34;Static Method Executed&#34;);
+    }
+}
+  
+class TestClass implements TestInterface
+{
+    // Implementation of square abstract method
+    public void square (int a)
+    {
+        System.out.println(a*a);
+    }
+  
+    public static void main(String args[])
+    {
+        TestClass d = new TestClass();
+        d.square(4);
+        // Static method executed
+       TestInterface.show();
+    }
+}</pre>
+<pre>Output: 16
+Static Method Executed</pre>
+<p><strong>Important Points:</strong></p>
+<ol type="1" start="1">
+<li>Interfaces can have default methods with implementation from java 8 onwards.</li>
+<li>Interfaces can have static methods as well similar to static method of classes.</li>
+<li>Default methods were introduced to provide backward compatibility for old interfaces so that they can have new methods without affecting existing code.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Functional Interface:" duration="0">
+        <p><strong>Introduction :  Functional programming </strong>paradigm has become very famous in software world. Java is facing strong competition from C#, Scala and many other jvm languages which support lambda expressions and functional programming. Java development team wanted to make this transition from OOP to also allow functional programming. Functional interface therefore came into picture. If you want to accept a lambda expression then you can define a functional interface which defines a contract between them. <br><strong>Functional interfaces</strong> are new concept introduced in <strong>Java 8</strong>. An interface with exactly single abstract method ( <strong>SAM -&gt; single abstract method )</strong> is called Functional Interface. ( <strong>But it can any number of static and default methods. Because  they are not abstract</strong>) We don&#39;t need to use <strong>@FunctionalInterface</strong> annotation to mark an interface as Functional Interface. It is not mandatory to use it, but it&#39;s best practice to use it with functional interfaces to avoid addition of extra methods accidentally. If the interface is annotated with<strong> @FunctionalInterface</strong> annotation and we try to have more than one abstract method, it throws compiler error.<br><br><strong>Use Case of Functional Interface :<br><br>@FunctionalInterface </strong>annotation is useful for compilation time checking of your code. You cannot have more than one method besides static, default and abstract methods that override methods in Object in your <strong>@FunctionalInterface</strong> or any other interface used as a functional interface.<br>But you can use lambdas without this annotation as well as you can override methods without <strong>@Override</strong> annotation.<br><br>This <strong>can be used</strong> in lambda expression:</p>
+<pre>public interface Foo {
+ public void doSomething(); 
+}</pre>
+<p><br>This <strong>cannot be used</strong> in lambda expression ( as this is not contain single abstract method):</p>
+<pre>public interface Foo { 
+public void doSomething(); 
+public void doSomethingElse();
+ }</pre>
+<p><br>But this will give <strong>compilation error</strong>:</p>
+<pre>@FunctionalInterface 
+public interface Foo {
+ public void doSomething(); 
+/* We can&#39;t add more than one abstract method, if interface is annotated with @FunctionalInterface */
+public void doSomethingElse();
+ }</pre>
+<p><br>Invalid <strong>&#39;@FunctionalInterface&#39;</strong> annotation; Foo is not a functional interface</p>
+<p><strong>Another Use Case :</strong></p>
+<p>If we look into some other programming languages such as C++, JavaScript; they are called <strong>functional programming language</strong> because we can write functions and use them when required. Some of these languages support Object Oriented Programming as well as Functional Programming.<br>Being object oriented is not bad, but it brings a lot of verbosity to the program. For example, let&#39;s say we have to create an instance of Runnable. Usually we do it using anonymous classes like below.<br></p>
+<pre>Runnable r = new Runnable(){
+                        @Override
+                        public void run() {
+                                System.out.println(&#34;My Runnable&#34;);
+                        }};
+</pre>
+<p><br>If you look at the above code, the actual part that is of use is the code inside <strong>run() </strong>method. Rest all of the code is because of the way java programs are structured.<br><strong>Java 8 Functional Interfaces </strong>and <strong>Lambda Expressions </strong>help us in writing smaller and cleaner code by removing a lot of boilerplate code.<strong>Java 8 </strong>Collections API has been rewritten and new Stream API is introduced that uses a lot of functional interfaces. Java 8 has defined a lot of functional interfaces in java.util.function package. Some of the useful <strong>java 8 functional interfaces</strong> are Consumer, Supplier, Function and Predicate.<br>One of the major benefits of functional interface is we can use lambda expressions to instantiate them. <strong>For example,</strong> a <strong>Comparable </strong>interface with a single method <strong>compareTo() </strong>is used for comparison purpose.</p>
+<p><strong>Example : <br></strong>// Sample program to demonstrate Functional Interface and  lambda expressions to implement a user defined functional interface.</p>
+<pre>@FunctionalInterface
+interface Square
+{
+    int calculate(int x);
+} 
+class Test
+{
+    public static void main(String args[])
+    {
+        int a = 5;
+        // lambda expression to define the calculate method
+        Square s = (int x)-&gt;x*x;
+        // parameter passed and return type must be
+        // same as defined in the prototype
+        int ans = s.calculate(a);
+        System.out.println(ans);
+    }
+}
+</pre>
+<p><strong>Built-in Functional Interfaces in Java (java.util.function Package):<br></strong>The java.util.function package in <strong>Java 8 </strong>contains many built in functional interfaces like-</p>
+<ul>
+<li><strong>Predicate: </strong>The Predicate interface has an abstract method test which gives a Boolean value as a result for the specified argument. Its prototype is</li>
+</ul>
+<pre>public Predicate
+{
+   public boolean test(T  t);
+ }</pre>
+<ul>
+<li><strong>BinaryOperator:</strong> The BinaryOperator interface has an abstract method apply which takes two argument and returns a result of same type. Its prototype is</li>
+</ul>
+<pre>public interface BinaryOperator 
+{
+     public T apply(T x, T y);
+}      </pre>
+<ul>
+<li><strong>Function:</strong> The Function interface has an abstract method apply which takes argument of type T and returns a result of type R. Its prototype is.</li>
+</ul>
+<pre>public interface Function 
+{
+   public R apply(T t);
+</pre>
+<p><strong>// A sample program to demonstrate the use of predicate interface</strong></p>
+<pre>import java.util.function.Predicate;
+class Test
+{
+    public static void main(String args[])
+    {
+        // create a list of strings
+        List&lt;String&gt; names =       Arrays.asList(&#34;Deb&#34;,&#34;Debu&#34;,&#34;Deko&#34;,&#34;QA&#34;,&#34;ma&#34;);
+       // declare the predicate type as string and use
+      // lambda expression to create object
+        Predicate&lt;String&gt; p = (s)-&gt;s.startsWith(&#34;D&#34;);
+     // Iterate through the list
+     for (String st:names)
+        {
+            // call the test method
+            if (p.test(st))
+                System.out.println(st);
+      }
+   }
+}</pre>
+<pre>Output:
+Deb
+Debu
+Deko</pre>
+<h3>Function interface</h3>
+<p><br>The Java <strong>Function </strong>interface (<strong>java.util.function.Function</strong>) interface is one of the most central functional interfaces in Java. The Function interface represents a function (method) that takes a single parameter and returns a single value. Here is how the Function interface definition looks:</p>
+<pre>public interface Function&lt;T,R&gt; {
+    public &lt;R&gt; apply(T parameter);
+}</pre>
+<p><br>The <strong>Function </strong>interface actually contains a few extra methods in addition to the methods listed above, but since they all come with a default implementation, you do not have to implement these extra methods.<br>The only method you have to implement to implement the <strong>Function </strong>interface is the <strong>apply()</strong> method. Here is a Function implementation example:<br></p>
+<pre>public class AddThree implements Function&lt;Long, Long&gt; {
+    @Override
+    public Long apply(Long aLong) {
+        return aLong + 3;
+    }
+}
+</pre>
+<p>This Function implementation implements the <strong>apply()</strong> method so it takes a Long as parameter, and returns a Long. Here is an example of using the above <strong>AddThree </strong>class:<br></p>
+<pre>Function&lt;Long, Long&gt; adder = new AddThree();
+Long result = adder.apply((long) 4);
+System.out.println(&#34;result = &#34; + result);
+</pre>
+<p><br>First this example creates a new <strong>AddThree </strong>instance and assigns it to a <strong>Function </strong>variable. Second, the example calls the <strong>apply() </strong>method on the <strong>AddThree </strong>instance. Third, the example prints out the result (which is <strong>7</strong>).<br>You can also implement the <strong>Function </strong>interface using a Java <strong>lambda expression</strong>. Here is how that looks:<br></p>
+<pre>Function&lt;Long, Long&gt; adderLambda = (value) -&gt; value + 3;
+Long resultLambda = adderLambda.apply((long) 8);
+System.out.println(&#34;resultLambda = &#34; + resultLambda);
+</pre>
+<p><br>As you can see, the <strong>Function </strong>interface implementation is now inlined in the declaration of the adderLambda variable, rather than in a separate class. This is a bit shorter, plus we can see directly in the above code what it is doing.</p>
+<h3>Predicate interface</h3>
+<p><br>The Java <strong>Predicate </strong>interface, (<strong>java.util.function.Predicate</strong>) represents a simple function that takes a single value as parameter, and returns true or false. Here is how the <strong>Predicate </strong>functional interface definition looks:</p>
+<pre>public interface Predicate {
+    boolean test(T t);
+}</pre>
+<p><br>The <strong>Predicate </strong>interface contains more methods than the<strong> test() </strong>method, but the rest of the methods are <strong>default </strong>or <strong>static </strong>methods which you don&#39;t have to implement.<br>You can implement the Predicate interface using a class, like this:<br></p>
+<pre>public class CheckForNull implements Predicate {
+    @Override
+    public boolean test(Object o) {
+        return o != null;
+    }
+}
+</pre>
+<p><br>You can also implement the Java <strong>Predicate </strong>interface using a <strong>Lambda expression.</strong> Here is an example of implementing the Predicate interface using a Java lambda expression:<br></p>
+<pre>Predicate predicate = (value) -&gt; value != null;
+</pre>
+<p><br>This lambda implementation of the Predicate interface effectively does the same as the implementation above that uses a class.</p>
+<h3>UnaryOperator interface</h3>
+<p><br>The Java <strong>UnaryOperator </strong>interface is a functional interface that represents an operation which takes a single parameter and returns a parameter of the same type. Here is an example of a Java <strong>UnaryOperator </strong>implementation:</p>
+<pre>UnaryOperator&lt;Person&gt; unaryOperator = 
+        (person) -&gt; { person.name = &#34;New Name&#34;; return person; };
+</pre>
+<p><br>The <strong>UnaryOperator </strong>interface can be used to represent an operation that takes a specific object as parameter, modifies that object, and returns it again - possibly as part of a functional stream processing chain.</p>
+<h3>BinaryOperator interface</h3>
+<p><br>The Java <strong>BinaryOperator </strong>interface is a functional interface that represents an operation which takes two parameters and returns a single value. Both parameters and the return type must be of the same type.<br>The Java <strong>BinaryOperator </strong>interface is useful when implementing functions that sum, subtract, divide, multiply etc. two elements of the same type, and returns a third element of the same type.<br>Here is an example implementation of the <strong>BinaryOperator </strong>interface:</p>
+<pre>BinaryOperator&lt;MyValue&gt; binaryOperator =
+        (value1, value2) -&gt; { value1.add(value2); return value1; };</pre>
+<h3>Supplier interface</h3>
+<p><br>The Java <strong>Supplier </strong>interface is a functional interface that represents a function that supplies a value of some sorts. The Supplier interface can also be thought of as a factory interface. Here is an example implementation of the Java <strong>Supplier </strong>interface:</p>
+<pre>Supplier&lt;Integer&gt; supplier = () -&gt; new Integer((int) (Math.random() * 1000D));
+</pre>
+<p><br>This Java <strong>Supplier </strong>implementation returns a new Integer instance with a random value between 0 and 1000.</p>
+<h3>Consumer interface</h3>
+<p><br>The Java <strong>Consumer </strong>interface is a functional interface that represents a function that consumes a value without returning any value. A Java Consumer implementation could be printing out a value, or writing it to a file, or over the network etc. Here is an example implementation of the Java <strong>Consumer </strong>interface:<br><code>Consumer&lt;</code><strong><code>Integer</code></strong><code>&gt; consumer = (</code><strong><code>value</code></strong><code>) -&gt; System.</code><strong><code>out</code></strong><code>.println(</code><strong><code>value</code></strong><code>);</code><br>This Java Consumer implementation prints the value passed as parameter to it out to System.out.</p>
+<h3>Function Composition</h3>
+<p><br>The Java <strong>Function </strong>interface <strong>(java.util.function.Function) </strong>also contains a few methods that can be used to compose new Function instances from existing ones. <strong>compose() method :</strong></p>
+<p>The Java <strong>Function compose() </strong>method composes a new Function instance from the Function instance it is called on, and the Function instance passed as parameter to the <strong>compose() </strong>method.</p>
+<p>The Function returned by compose() will first call the Function passed as parameter to compose(), and then it will call the Function which compose() was called on. This is easier to understand with an example, so here is a Java Function compose() example:</p>
+<pre>Function&lt;Integer, Integer&gt; multiply = (value) -&gt; value * 2;
+Function&lt;Integer, Integer&gt; add      = (value) -&gt; value + 3;
+
+Function&lt;Integer, Integer&gt; addThenMultiply = multiply.compose(add);
+
+Integer result1 = addThenMultiply.apply(3);
+System.out.println(result1);
+</pre>
+<p><br>When called with the value 3, the <strong>compose Function </strong>will first call the add <strong>Function </strong>and then the multiply Function. The resulting calculation will be (3 + 3) * 2 and the result will be 12.</p>
+<h3>andThen() method</h3>
+<p><br>The Java Function andThen() method works opposite of the <strong>compose()</strong> method. A Function composed with andThen() will first call the <strong>Function </strong>that <strong>andThen()</strong> was called on, and then it will call the <strong>Function </strong>passed as parameter to the <strong>andThen()</strong> method. Here is a Java Function andThen() example:</p>
+<pre>Function&lt;Integer, Integer&gt; multiply = (value) -&gt; value * 2;
+Function&lt;Integer, Integer&gt; add      = (value) -&gt; value + 3;
+
+Function&lt;Integer, Integer&gt; multiplyThenAdd = multiply.andThen(add);
+
+Integer result2 = multiplyThenAdd.apply(3);
+System.out.println(result2);</pre>
+<p><br>This example first creates a multiply <strong>Function </strong>and an add <strong>Function</strong>. Then the <strong>andThen() </strong>method is called on the multiply Function to compose a new Function, passing the add Function as parameter to <strong>andThen()</strong>.</p>
+<p>Calling the <strong>Function </strong>composed by <strong>andThen()</strong> with the value 3 will result in the following calculation:<br>3 * 2 + 3 and the result will be 9.</p>
+<p><strong>Note:</strong> As mentioned in the beginning, <strong>andThen() </strong>works opposite of <strong>compose().</strong> Therefore, calling <strong>a.andThen(b)</strong> is actually the same as calling <strong>b.compose(a) </strong>.<br></p>
+<h3>Predicate Composition</h3>
+<p><br>The <strong>Predicate </strong>interface (<strong>java.util.function.Predicate</strong>) contains a few methods that help you compose new <strong>Predicate </strong>instances from other Predicate instances. <br><strong>and() default method :<br></strong>The <strong>Predicate and()</strong> method is a <strong>default </strong>method. The <strong>and() </strong>method is used to combine two other <strong>Predicate </strong>functions in the same way I showed in the beginning of this Java functional composition tutorial. Here is an example of functional composition with the <strong>Predicate and()</strong> method:<br></p>
+<pre>Predicate&lt;String&gt; startsWithA = (text) -&gt; text.startsWith(&#34;A&#34;);
+Predicate&lt;String&gt; endsWithX   = (text) -&gt; text.endsWith(&#34;x&#34;);
+
+Predicate&lt;String&gt; composed = startsWithA.and(endsWithX);
+
+String input = &#34;A hardworking person must relax&#34;;
+boolean result = composed.test(input);
+System.out.println(result);</pre>
+<p>This <strong>Predicate </strong>composition example composes a new Predicate from two other Predicate instances using the<strong> and()</strong> method of one of the basic <strong>Predicate </strong>instances.<br>The composed <strong>Predicate </strong>will return true from it&#39;s <strong>test()</strong> method if both of the Predicate instances it was composed from also return true. In other words, if both <strong>Predicate one </strong><em>and </em><strong>Predicate two </strong>return true.<br><br><strong>or() method:<br></strong>The<strong> Predicate or() </strong>method is used to combine a Predicate instance with another, to compose a third Predicate instance. The composed Predicate will return true if either of the Predicate instances it is composed from return true, when their<strong> test()</strong> methods are called with same input parameter as the composed <strong>Predicate</strong>. Here is a Java <strong>Predicate or() </strong>functional composition example:</p>
+<pre>Predicate&lt;String&gt; startsWithA = (text) -&gt; text.startsWith(&#34;A&#34;);
+Predicate&lt;String&gt; endsWithX   = (text) -&gt; text.endsWith(&#34;x&#34;);
+
+Predicate&lt;String&gt; composed = startsWithA.or(endsWithX);
+
+String input = &#34;A hardworking person must relax sometimes&#34;;
+boolean result = composed.test(input);
+System.out.println(result);
+</pre>
+<p><br>This <strong>Predicate or()</strong> functional composition example first creates two basic Predicate instances. Second, the example creates a third <strong>Predicate </strong>composed from the first two, by calling the<strong> or() </strong>method on the first Predicate and passing the second <strong>Predicate </strong>as parameter to the <strong>or() </strong>method.<br>The output of running the above example will be true because the first of the two Predicate instances used in the composed Predicate will return true when called with the String &#34;A hardworking person must relax sometimes&#34;.</p>
+<p><strong>Please note :</strong> As before JAVA 8 , there was no concept of Functional interface, so after JAVA 8 Runnable, Comparable all of the interface annotated with functional interface.</p>
+<p><strong>java.lang.Runnable</strong> is annotated as a functional interface:</p>
+<pre>@FunctionalInterface
+public interface Runnable 
+{
+   public abstract void run();
+}</pre>
+<p><strong>Important Points/Observations:</strong></p>
+<ol type="1" start="1">
+<li>A functional interface has only one abstract method but it can have multiple default methods.</li>
+<li>A functional interface can define as many default and static methods as it requires. However, it must declare exactly one abstract method, or the compiler will complain that it isn&#39;t a functional interface.</li>
+<li><strong>@FunctionalInterface</strong> annotation is used to ensure an interface can&#39;t have more than one abstract method. The use of this annotation is optional.</li>
+<li>The java.util.function package contains many builtin functional interfaces in Java 8.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lambda Expression:" duration="0">
+        <p><strong>Introduction : </strong>So lambda expressions are means to create anonymous classes of functional interfaces easily. There are no runtime benefits of using lambda expressions, but it makes code lines less.<br>A new package <strong>java.util.function </strong>has been added with bunch of functional interfaces to provide target types for lambda expressions and method references.<br><br><strong>Lambda Syntax and Target Types<br></strong>A lambda adheres to the following syntax:<br><strong>( formal-parameter-list )  -&gt; { expression-or-statements }<br>formal-parameter-list </strong>is a <strong>comma-separated</strong> list of formal parameters that match the formal parameters of the functional interface&#39;s single abstract method. If you don&#39;t specify their types, the compiler infers the parameter types from the context. Consider the following examples:<br><strong>formal-parameter-list </strong>is a comma-separated list of formal parameters that match the formal parameters of the functional interface&#39;s single abstract method. If you don&#39;t specify their types, the compiler infers the parameter types from the context. Consider the following examples:</p>
+<pre>(int x, int y)
+(x, y)</pre>
+<p>If formal-parameter-list consists of a single parameter, the parentheses can be omitted. However, if formal-parameter-list is empty (there are no parameters), the empty parentheses must be specified. Here are a couple of examples:</p>
+<pre>x
+()
+</pre>
+<p><br>Following the -&gt; operator is expression-or-statements, which is an expression or a block of statements (the lambda body). If you place the expression between the opening and closing braces ({ }), you must use a return statement to return its value; otherwise, don&#39;t use return. Consider these examples:</p>
+<pre>(int x, int y) -&gt; x+y
+(x, y) -&gt; { return x+y; }
+(int x, int y) -&gt; { System.out.println(x+y); return x+y; }
+@FunctionalInterface
+interface Converter
+{
+   double convert(double input);
+}
+
+public class LambdaDemo
+{
+   public static void main(String[] args)
+   {
+      // Convert Fahrenheit to Celsius
+      System.out.println(convert(input -&gt; (input-32)*5.0/9.0, 98.6));
+
+      // Convert Kilometers to Miles
+      System.out.println(convert(input -&gt; input/1.609344, 8));
+   }
+
+   static double convert(Converter converter, double input)
+   {
+      return converter.convert(input);
+   }
+}</pre>
+<p><br>In the above example, a functional interface named Converter that declares a double convert(double input) method for converting some input value to an output value. It also introduces a <strong>LambdaDemo </strong>class whose <strong>main() </strong>method demonstrates this <strong>functional </strong>interface.</p>
+<p>The Converter functional interface is demonstrated in the context of a static double convert(Converter converter, double input) method. The lambda makes it easy to pass code as data to this method, which is ultimately received as a Converter instance.</p>
+<p>Compile the class &amp; interface (javac <strong>LambdaDemo.java &amp;</strong> javac <strong>Converter.java </strong>) and run the application (java <strong>LambdaDemo</strong>). <br>You should observe the following</p>
+<p>output:</p>
+<pre>37.0
+4.970969537898672</pre>
+<p><br>Associated with a lambda is an implicit target type (the type of object to which a lambda is bound). Because the target type must be a functional interface and is inferred from the context, lambdas can appear in only the following contexts:</p>
+<ul>
+<li>Variable declaration</li>
+<li>Assignment</li>
+<li>Return statement</li>
+<li>Array initializer</li>
+<li>Method or constructor arguments</li>
+<li>Lambda body</li>
+<li>Ternary conditional expression</li>
+<li>Cast expression</li>
+</ul>
+<p><strong>Why need Lambda Expression ?<br><br>1. </strong>To provide the implementation of Functional interface.<br>2. Less coding.<br><br><strong>Lambda Parameters : <br></strong>Since Java lambda expressions are effectively just methods, lambda expressions can take parameters just like methods. The (oldState, newState) part of the lambda expression shown earlier specifies the parameters the lambda expression takes. These parameters have to match the parameters of the method on the single method interface. In this case, these parameters have to match the parameters of the onStateChange() method of the StateChangeListener interface:</p>
+<pre>public void onStateChange(State oldState, State newState);
+</pre>
+<p><br>As a minimum the number of parameters in the lambda expression and the method must match.<br><br>Second, if you have specified any parameter types in the lambda expression, these types must match too. I haven&#39;t shown you how to put types on lambda expression parameters yet (it is shown later in this text), but in many cases you don&#39;t need them.<br><br><strong>Zero Parameters :<br></strong>If the method you are matching your lambda expression against takes no parameters, then you can write your lambda expression like this: <br><code>() -&gt; System.out.println(&#34;Zero parameter lambda&#34;);</code><strong><br>Notice </strong>how the parentheses have no content in between. That is to signal that the lambda takes no parameters<strong>.<br><br>One Parameter :<br></strong>If the method you are matching your Java lambda expression against takes one parameter, you can write the lambda expression like this:<br><code>(param) -&gt; System.out.println(&#34;One parameter: &#34; + param);</code><strong><br>Notice </strong>the parameter is listed inside the parentheses.<br>When a lambda expression takes a single parameter, you can also omit the parentheses, like this:<br></p>
+<pre>param -&gt; System.out.println(&#34;One parameter: &#34; + param);
+</pre>
+<p><strong>Multiple Parameters<br></strong>If the method you match your Java lambda expression against takes multiple parameters, the parameters need to be listed inside parentheses. Here is how that looks in Java code:<br></p>
+<pre>(p1, p2) -&gt; System.out.println(&#34;Multiple parameters: &#34; + p1 + &#34;, &#34; + p2);
+</pre>
+<p><br>Only when the method takes a single parameter can the parentheses be omitted.<br><br><strong>Parameter Types : </strong>Specifying parameter types for a lambda expression may sometimes be necessary if the compiler cannot infer the parameter types from the functional interface method the lambda is matching. Don&#39;t worry, the compiler will tell you when that is the case. Here is a Java lambda parameter type example:<br><code>(Car car) -&gt; System.out.println(&#34;The car is: &#34; + car.getName());</code><br>As you can see, the type (Car) of the car parameter is written in front of the parameter name itself, just like you would when declaring a parameter in a method elsewhere, or when making an anonymous implementation of an interface.<br><br><strong>Lambda Function Body :<br></strong>The body of a lambda expression, and thus the body of the function / method it represents, is specified to the right of the -&gt; in the lambda declaration: Here is an example:<br></p>
+<pre>(oldState, newState) -&gt; System.out.println(&#34;State changed&#34;);
+</pre>
+<p><br>If your lambda expression needs to consist of multiple lines, you can enclose the lambda function body inside the { } bracket which Java also requires when declaring methods elsewhere. Here is an example:<br></p>
+<pre>(oldState, newState) -&gt; {
+    System.out.println(&#34;Old state: &#34; + oldState);
+    System.out.println(&#34;New state: &#34; + newState);
+  }
+</pre>
+<p><strong>Returning a Value From a Lambda Expression<br></strong>You can return values from Java lambda expressions, just like you can from a method. You just add a return statement to the lambda function body, like this:<br></p>
+<pre>(param) -&gt; {
+    System.out.println(&#34;param: &#34; + param);
+    return &#34;return value&#34;;
+  }
+</pre>
+<p><br>In case all your lambda expression is doing is to calculate a return value and return it, you can specify the return value in a shorter way. Instead of this:<br><br><code>(a1, a2) -&gt; { return a1 &gt; a2; }</code><br>You can write:<br></p>
+<pre>(a1, a2) -&gt; a1 &gt; a2;</pre>
+<p><br><br>The compiler then figures out that the expression a1 &gt; a2 is the return value of the lambda expression (hence the name lambda expressions - as expressions return a value of some kind. <br></p>
+<pre>List&lt;Integer&gt; numbers = Arrays.asList(1, 2, 3, 4, 5, 6);</pre>
+<h3>Use Case :</h3>
+<p><br>we are requested to write a method that sums all the Integers in the list as for instance:<br></p>
+<pre>public int sumAll(List&lt;Integer&gt; numbers) {
+      int total = 0;
+        for (int number : numbers) {
+            total += number;
+            }
+      return total;
+}</pre>
+<p><br>The day after a manager comes to our cubicle and tells you that the business also requires to have a function that sums only the even number in the list. So what is the quickest thing we could do? Easy. Just copy and paste the former method and add to it the required filtering condition:<br></p>
+<pre>public int sumAllEven(List&lt;Integer&gt; numbers) {
+   int total = 0;
+   for (int number : numbers) {
+       if (number % 2 == 0) {
+           total += number;
+       }
+   }
+   return total;
+}</pre>
+<p><br><br>Another day, another requirement: this time they need to sum the numbers in the list again but only if they are greater than 3. So what could we do? Well, we could again copy and paste the former method and just change that boolean condition ... but it feels so dirty, isn&#39;t it? Now, following the <a href="http://programmer.97things.oreilly.com/wiki/index.php/First_Write,_Second_Copy,_Third_Refactor" target="_blank">&#34;First Write, Second Copy, Third Refactor&#34; principle</a> it is time to wonder if there is a smarter and more generic way to do this. In this case implementing an higher-order function accepting together with the list also a Predicate (another functional interface added in Java 8) that defines how to filter the numbers in the list itself before to sum them up.<br></p>
+<pre>public int sumAll(List&lt;Integer&gt; numbers, Predicate&lt;Integer&gt; p) {
+   int total = 0;
+   for (int number : numbers) {
+       if (p.test(number)) {
+           total += number;
+      }
+   }
+   return total;
+}</pre>
+<p><br>In other words we are passing to the method not only the data (the list of numbers) but also a behavior (the Predicate) defining how to use them. In this way we can satisfy all the 3 requirements with a single more generic and then more reusable method:<br></p>
+<pre>sumAll(numbers, n -&gt; true);
+sumAll(numbers, n -&gt; n % 2 == 0);
+sumAll(numbers, n -&gt; n &gt; 3);</pre>
+<p><strong>Another Example ( Comparison between Java 7 &amp; 8 ) : <br><br></strong>In <strong>Java 7</strong> you would have to implement this interface in order to listen for state changes. Imagine you have a class called StateOwner which can register state event listeners. Here is an example:<br></p>
+<pre>public class StateOwner {
+    public void addStateListener(StateChangeListener listener) { ... }
+}</pre>
+<p>In <strong>Java 7</strong> you could add an event listener using an anonymous interface implementation, like this:</p>
+<pre>StateOwner stateOwner = new StateOwner();
+
+stateOwner.addStateListener(new StateChangeListener() {
+
+    public void onStateChange(State oldState, State newState) {
+        // do something with the old and new state.
+    }
+});</pre>
+<p>First a <strong>StateOwner </strong>instance is created. Then an anonymous implementation of the <strong>StateChangeListener </strong>interface is added as listener on the StateOwner instance.</p>
+<p>In <strong>Java 8</strong> you can add an event listener using a Java lambda expression, like this:</p>
+<pre>StateOwner stateOwner = new StateOwner();
+stateOwner.addStateListener(
+    (oldState, newState) -&gt; System.out.println(&#34;State changed&#34;)
+);</pre>
+<p><strong>The lambda expressions is this part:</strong></p>
+<pre>(oldState, newState) -&gt; System.out.println(&#34;State changed&#34;)</pre>
+<p>The lambda expression is matched against the parameter type of the <strong>addStateListener() </strong>method&#39;s parameter. If the lambda expression matches the parameter type ( in this case the <strong>StateChangeListenerinterface </strong>) , then the lambda expression is turned into a function that implements the same interface as that parameter.</p>
+<p>Java lambda expressions can only be used where the type they are matched against is a single method interface. In the example above, a lambda expression is used as parameter where the parameter type was the StateChangeListener interface. This interface only has a single method. Thus, the<strong> lambda expression</strong> is matched successfully against that interface.</p>
+<h3><strong>Matching Lambdas to Interfaces</strong></h3>
+<p>A single method interface is also sometimes referred to as a functional interface. Matching a Java lambda expression against a functional interface is divided into these steps:</p>
+<ul>
+<li>Does the interface have only one abstract (unimplemented) method?</li>
+<li>Does the parameters of the lambda expression match the parameters of the single method?</li>
+<li>Does the return type of the lambda expression match the return type of the single method?</li>
+</ul>
+<p>If the answer is yes to these three questions, then the given lambda expression is matched successfully against the interface.</p>
+<h3>Lambda Expressions vs. Anonymous Interface Implementations</h3>
+<p><br>Even though lambda expressions are close to anonymous interface implementations, there are a few differences that are worth noting.</p>
+<p>The major difference is, that an anonymous interface implementation can have state (member variables) whereas a lambda expression cannot. Look at this interface:</p>
+<pre>public interface MyEventConsumer {
+    public void consume(Object event);
+}</pre>
+<p><br>This interface can be implemented using an anonymous interface implementation, like this:<br></p>
+<pre>MyEventConsumer consumer = new MyEventConsumer() {
+    public void consume(Object event){
+        System.out.println(event.toString() + &#34; consumed&#34;);
+    }
+};</pre>
+<p>This anonymous <strong>MyEventConsumer </strong>implementation can have its own internal state. Look at this redesign:</p>
+<pre>MyEventConsumer myEventConsumer = new MyEventConsumer() {
+    private int eventCount = 0;
+    public void consume(Object event) {
+        System.out.println(event.toString() + &#34; consumed &#34; + this.eventCount++ + &#34; times.&#34;);
+    }
+};</pre>
+<p>Notice how the anonymous <strong>MyEventConsumer </strong>implementation now has a field named <strong>eventCount</strong>.</p>
+<p>A lambda expression cannot have such fields. A lambda expression is thus said to be stateless</p>
+<p><strong>Important points:</strong></p>
+<ul>
+<li>The body of a lambda expression can contain zero, one or more statements.</li>
+<li>When there is a single statement curly brackets are not mandatory and the return type of the anonymous function is the same as that of the body expression.</li>
+<li>When there are more than one statements, then these must be enclosed in curly brackets (a code block) and the return type of the anonymous function is the same as the type of the value returned within the code block, or void if nothing is returned.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Method Reference or (::) Double Colon:" duration="0">
+        <p><strong>Introduction: </strong>We generally use <strong>lambda expressions</strong> to create anonymous methods but sometimes lambda expressions are also used to call an existing method. There is another feature provided in <strong>Java 8 </strong>related to lambda expression called method reference that provides a clearer alternative to refer to the existing method by name. Important thing to note about method reference in Java is that they provide a way to refer to a method, they don&#39;t execute the method.<br><strong>Method reference</strong> in Java relates to lambda expression as they also require a target type context and at the time of execution they also create an instance of <strong>functional </strong>interface.<br>How they differ is where lambda expressions let us define anonymous methods which can be used as an instance of functional interfaces. Method references do the same thing, but with existing methods.<br><strong>From Lambdas to Double Colon Operator<br></strong>With Lambdas expressions, we&#39;ve seen that code can become very concise.<br><strong>For example</strong>, to create a comparator, the following syntax is enough:</p>
+<pre>Comparator c = (Computer c1, Computer c2) -&gt; c1.getAge().compareTo(c2.getAge());</pre>
+<p><br>Then, with type inference:<br></p>
+<pre>Comparator c = (c1, c2) -&gt; c1.getAge().compareTo(c2.getAge());</pre>
+<p><br>But can we make the code above even more expressive and readable? Let&#39;s have a look:<br></p>
+<pre>Comparator c = Comparator.comparing(Computer::getAge);</pre>
+<p><br>We&#39;ve used the :: operator as shorthand for lambdas calling a specific method – by name. And the end, result is of course even more readable syntax.<br><br><strong>How Does It Work?<br></strong>Very simply put, when we are using a method reference – the target reference is placed before the delimiter :: and the name of the method is provided after it.<br><strong>For example:<br></strong></p>
+<pre>Computer::getAge;</pre>
+<p><br>We&#39;re looking at a method reference to the method <strong>getAge </strong>defined in the <strong>Computer </strong>class.<br>We can then operate with that function:<br></p>
+<pre>Function&lt;Computer, Integer&gt; getAge = Computer::getAge;
+Integer computerAge = getAge.apply(c1);</pre>
+<p><strong>Kinds of Method References in Java :<br></strong>There are four kinds of method references in Java.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Kind</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Example</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Syntax</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Reference to a static method</p>
+</td><td colspan="1" rowspan="1"><p>ContainingClass::staticMethodName</p>
+</td><td colspan="1" rowspan="1"><p>ClassName::methodName</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Reference to an instance method of a particular object</p>
+</td><td colspan="1" rowspan="1"><p>containingObject::instanceMethodName</p>
+</td><td colspan="1" rowspan="1"><p>objRef::methodName</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Reference to an instance method of an arbitrary object of a particular type</p>
+</td><td colspan="1" rowspan="1"><p>ContainingType::methodName</p>
+</td><td colspan="1" rowspan="1"><p>ClassName::instanceMethodName</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Reference to a constructor</p>
+</td><td colspan="1" rowspan="1"><p>ClassName::new</p>
+</td><td colspan="1" rowspan="1"><p>classname::new</p>
+</td></tr>
+</table>
+<p><strong>Notice that </strong>the class name is separated from the method name by a double colon. The <strong>::</strong> is a new separator (known as <strong>double colon operator</strong>) that has been added in Java 8.</p>
+<h3>Method References as Lambdas</h3>
+<p><br>In the case where all your lambda expression does is to call another method with the parameters passed to the lambda, the Java lambda implementation provides a shorter way to express the method call. First, here is an example single function interface:</p>
+<pre>public interface MyPrinter{
+    public void print(String s);
+}</pre>
+<p><br>And here is an example of creating a Java lambda instance implementing the <strong>MyPrinter </strong>interface:</p>
+<pre>MyPrinter myPrinter = (s) -&gt; { System.out.println(s); };</pre>
+<p>Because the lambda body only consists of a single statement, we can actually omit the enclosing { }brackets. Also, since there is only one parameter for the lambda method, we can omit the enclosing ( )brackets around the parameter. Here is how the resulting lambda declaration looks:<br></p>
+<pre>MyPrinter myPrinter = s -&gt; System.out.println(s);</pre>
+<p><br>Since all the lambda body does is forward the string parameter to the System.out.println() method, we can replace the above lambda declaration with a method reference. Here is how a lambda method reference looks:<br></p>
+<pre>MyPrinter myPrinter = System.out::println;</pre>
+<p><strong>Notice the double colons ::</strong> These signal to the Java compiler that this is a method reference. The method referenced is what comes after the double colons. Whatever class or object that owns the referenced method comes before the double colons.</p>
+<p>You can reference the following types of methods:</p>
+<ul>
+<li>Static method</li>
+<li>Instance method on parameter objects</li>
+<li>Instance method</li>
+<li>Constructor</li>
+</ul>
+<p>Each of these types of method references are covered in the following sections.</p>
+<h3>Static Method References</h3>
+<p><br>The easiest methods to reference are static methods. Here is first an example of a single function interface:<br></p>
+<pre>public interface Finder {
+    public int find(String s1, String s2);
+}</pre>
+<p>And here is a static method that we want to create a method reference to:<br></p>
+<pre>public class MyClass{
+    public static int doFind(String s1, String s2){
+        return s1.lastIndexOf(s2);
+    }
+}</pre>
+<p><br>And finally here is a Java lambda expression referencing the static method:<br></p>
+<pre>Finder finder = MyClass::doFind;</pre>
+<p>Since the parameters of the <strong>Finder.find()</strong> and <strong>MyClass.doFind()</strong> methods match, it is possible to create a lambda expression that implements <strong>Finder.find()</strong> and references the <strong>MyClass.doFind()</strong> method.<br></p>
+<h3>Parameter Method Reference</h3>
+<p><br>You can also reference a method of one of the parameters to the lambda. Imagine a single function interface that looks like this:<br></p>
+<pre>public interface Finder {
+    public int find(String s1, String s2);
+}</pre>
+<p><br>The interface is intended to represent a component able to search s1 for occurrences of s2. Here is an example of a Java lambda expression that calls <strong>String.indexOf()</strong> to search:<br></p>
+<pre>Finder finder = String::indexOf;</pre>
+<p>This is equivalent of this lambda definition:<br></p>
+<pre>Finder finder = (s1, s2) -&gt; s1.indexOf(s2);</pre>
+<p>Notice how the shortcut version references a single method. The Java compiler will attempt to match the referenced method against the first parameter type, using the second parameter type as parameter to the referenced method.<br></p>
+<h3>Instance Method References</h3>
+<p><br>Third, it is also possible to reference an instance method from a lambda definition. First, let us look at a single method interface definition:</p>
+<pre>public interface Deserializer {
+    public int deserialize(String v1);
+}
+</pre>
+<p><br>This interface represents a component that is capable of &#34;deserializing&#34; a String into an int.</p>
+<p>Now look at this <strong>StringConverter </strong>class:<br></p>
+<pre>public class StringConverter {
+    public int convertToInt(String v1){
+        return Integer.valueOf(v1);
+    }
+}</pre>
+<p>The <strong>convertToInt</strong>() method has the same signature as the deserialize() method of the Deserializer <strong>deserialize</strong>() method. Because of that, we can create an instance of <strong>StringConverter </strong>and reference its <strong>convertToInt</strong>() method from a Java lambda expression, like this:</p>
+<pre>StringConverter stringConverter = new StringConverter();
+Deserializer des = stringConverter::convertToInt;</pre>
+<p>The lambda expression created by the second of the two lines references the convertToInt method of the StringConverter instance created on the first line.<br></p>
+<h3>Constructor References</h3>
+<p><br>Finally it is possible to reference a constructor of a class. You do that by writing the class name followed by ::new, like this:<br></p>
+<pre>MyClass::new</pre>
+<p>Too see how to use a constructor as a lambda expression, look at this interface definition:</p>
+<pre>public interface Factory {
+    public String create(char[] val);
+}</pre>
+<p>The <strong>create()</strong> method of this interface matches the signature of one of the constructors in the String class. Therefore this constructor can be used as a lambda. Here is an example of how that looks:</p>
+<pre>Factory factory = String::new;</pre>
+<p>This is equivalent to this Java lambda expression:</p>
+<pre>Factory factory = chars -&gt; new String(chars);</pre>
+<p><strong>The following example code shows a static method reference in Java:(Method References to static methods)</strong></p>
+<pre>import java.util.Arrays;
+
+@FunctionalInterface
+interface IMyStringFunc&lt;T, R&gt;{
+    R stringFunc(T t);
+}
+public class MethodRefDemo {
+    public static void main(String[] args) {
+        //String array of names
+       String[] strNames = new String[]{&#34;Ram&#34;, &#34;shyam&#34;, &#34;Ramesh&#34;, &#34;John&#34;, &#34;brad&#34;, 
+               &#34;Suresh&#34;};
+       // method reference to the static method sortName
+       IMyStringFunc&lt;String[],String[]&gt; stringFunc = SortClass::sortName;
+       // Here calling strngFunc will refer to the implementing method
+       // sortName()
+       String[] sortedNames = stringFunc.stringFunc(strNames);
+       for(String name : sortedNames){
+           System.out.println(name);
+       }
+   }
+}</pre>
+<pre>class SortClass{
+    // A static method that sorts an array
+    static String[] sortName(String[] names) {
+        //Sorting array using sort method (case sensitive)
+        Arrays.sort(names);
+        return names;
+    }
+}</pre>
+<pre>Output
+John
+Ram
+Ramesh
+Suresh
+brad
+Shyam</pre>
+<p>In the code in this line <strong>SortClass::sortName</strong>; existing method <strong>sortName</strong>() is referred using method reference. This works because sortName is compatible with the IMyStringFunc functional interface. Thus, the expression <strong>SortClass::sortName </strong>evaluates to a reference to an object in which method sortName provides the implementation of abstract method stringFunc in functional interface <strong>IMyStringFunc</strong>. </p>
+<p><strong>Method References to Instance Methods</strong></p>
+<p>To pass a reference to an instance method of a particular object is similar to static method reference, instead of class we need to use object</p>
+<p><strong>objRef::methodName</strong></p>
+<p><strong>Let&#39;s see the same example again with object</strong></p>
+<pre>import java.util.Arrays;
+@FunctionalInterface
+interface IMyStringFunc&lt;T, R&gt;{
+    R stringFunc(T t);
+}</pre>
+<pre>public class MethodRefDemo {
+ 
+    public static void main(String[] args) {
+        // creating an object
+        SortClass sc = new SortClass();
+         //String array of names
+        String[] strNames = new String[]{&#34;Ram&#34;, &#34;shyam&#34;, &#34;Ramesh&#34;, &#34;John&#34;, &#34;brad&#34;, 
+                &#34;Suresh&#34;};
+        
+        // method reference to the instance method sortName
+        IMyStringFunc&lt;String[],String[]&gt; refObj = sc::sortName;
+        String[] sortedNames = refObj.stringFunc(strNames);
+        for(String name : sortedNames){
+            System.out.println(name);
+        }
+    }
+}</pre>
+<pre>class SortClass{
+    // A non-static method that sorts an array
+    String[] sortName(String[] names) {
+        //Sorting array using sort method (case sensitive)
+        Arrays.sort(names);
+        return names;
+    }
+}</pre>
+<p><br>Reference to an instance method of an arbitrary object of a particular type</p>
+<p>There may be a situation when you want to specify an instance method that can be used with any object of a given class without any particular object. In that case name of the class is used even when a non-static method is specified.</p>
+<p><strong>ClassName::instanceMethodName</strong></p>
+<p><strong>Let&#39;s take one example where we have a Person class and we have a list of Person </strong>object. We want to call <strong>getFirstName</strong>() method on all those person objects.</p>
+<p><strong>Person Class<br></strong></p>
+<pre>public class Person {
+    private String firstName;
+    private String lastName;
+    private int age;
+    private char gender;
+    public Person(String firstName, String lastName, int age, char gender){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.gender = gender;
+    }
+    
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public int getAge() {
+        return age;
+    }
+    public char getGender() {
+        return gender;
+    }
+    
+    public String toString(){
+        StringBuffer sb = new StringBuffer();
+        sb.append(getFirstName()).append(&#34; &#34;);
+        sb.append(getLastName()).append(&#34; &#34;);
+        sb.append(getAge()).append(&#34; &#34;);
+        sb.append(getGender());
+        return sb.toString();
+        
+    }
+}
+@FunctionalInterface
+interface IMyStringFunc&lt;T, R&gt;{
+    R stringFunc(T t);
+}</pre>
+<pre>public class MethodRefDemo {
+
+    public static void main(String[] args) {
+        List&lt;Person&gt; personList = createList();
+         List allNames = MethodRefDemo. listAllNames (personList, Person::getFirstName);
+         System.out.println(&#34;&#34; + allNames);
+        
+    }
+    
+    //Utitlity method to create list
+    private static List&lt;Person&gt; createList(){
+        List&lt;Person&gt; tempList = new ArrayList&lt;Person&gt;();
+        IMyFunc createObj = Person::new;
+        Person person = createObj.getRef(&#34;Ram&#34;,&#34;Tiwari&#34;, 50, &#39;M&#39;);
+        tempList.add(person);
+        person = createObj.getRef(&#34;Prem&#34;, &#34;Chopra&#34;, 13, &#39;M&#39;);
+        tempList.add(person);
+        person = createObj.getRef(&#34;Tanuja&#34;, &#34;Trivedi&#34;, 30, &#39;F&#39;);
+        tempList.add(person);
+        person = createObj.getRef(&#34;Manoj&#34;, &#34;Sharma&#34;, 40, &#39;M&#39;);
+        tempList.add(person);
+        person = createObj.getRef(&#34;John&#34;, &#34;Trevor&#34;, 70, &#39;M&#39;);
+        tempList.add(person);
+        person = createObj.getRef(&#34;Alicia&#34;, &#34;Sliver&#34;, 17, &#39;F&#39;);
+        tempList.add(person);
+        System.out.println(&#34;List elements are - &#34;);
+        System.out.println(tempList);
+        return tempList;
+    }
+
+    private static List&lt;String&gt; listAllNames(List&lt;Person&gt; person, 
+             IMyStringFunc&lt;Person, String&gt; func){
+        List&lt;String&gt; result = new ArrayList&lt;String&gt;();
+        person.forEach(x -&gt; result.add(func.stringFunc(x)));
+        return result;
+    }
+}</pre>
+<p><br>Notice this line <strong>Person::getFirstName</strong> here we are calling getFirstName method on all the objects of the list not any one particular object.</p>
+<p><strong>Reference to a Constructor</strong></p>
+<p>A constructor can be referenced in the same way as a static method by using new.</p>
+<pre>public class Person {
+    private String firstName;
+    private String lastName;
+    private int age;
+    private char gender;
+    public Person(String firstName, String lastName, int age, char gender){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.gender = gender;
+    }
+    
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public int getAge() {
+        return age;
+    }
+    public char getGender() {
+        return gender;
+    }
+    
+    public String toString(){
+        StringBuffer sb = new StringBuffer();
+        sb.append(getFirstName()).append(&#34; &#34;);
+        sb.append(getLastName()).append(&#34; &#34;);
+        sb.append(getAge()).append(&#34; &#34;);
+        sb.append(getGender());
+        return sb.toString();
+        
+    }
+}</pre>
+<pre>@FunctionalInterface
+interface IMyFunc {
+    Person getRef(String firstName, String lastName, int age, char gender);
+}</pre>
+<pre>public class LambdaDemo {
+    
+    public static void main(String[] args) {
+        List&lt;Person&gt; personList = createList();
+        System.out.println(&#34;Name - &#34; + personList.get(0).getFirstName());
+    }
+    // Utitlity method to create list
+     private static List&lt;Person&gt; createList(){
+         List&lt;Person&gt; tempList = new ArrayList&lt;Person&gt;();
+         IMyFunc createObj = Person::new;
+         Person person = createObj.getRef(&#34;Ram&#34;,&#34;Tiwari&#34;, 50, &#39;M&#39;);
+         tempList.add(person);
+         person = createObj.getRef(&#34;Prem&#34;, &#34;Chopra&#34;, 13, &#39;M&#39;);
+         tempList.add(person);
+         person = createObj.getRef(&#34;Tanuja&#34;, &#34;Trivedi&#34;, 30, &#39;F&#39;);
+         tempList.add(person);
+         person = createObj.getRef(&#34;Manoj&#34;, &#34;Sharma&#34;, 40, &#39;M&#39;);
+         tempList.add(person);
+         person = createObj.getRef(&#34;John&#34;, &#34;Trevor&#34;, 70, &#39;M&#39;);
+         tempList.add(person);
+         person = createObj.getRef(&#34;Alicia&#34;, &#34;Sliver&#34;, 17, &#39;F&#39;);
+         tempList.add(person);
+         System.out.println(&#34;List elements are - &#34;);
+         System.out.println(tempList);
+         return tempList;
+     }
+}</pre>
+<pre>Output
+
+List elements are - 
+[Ram Tiwari 50 M, Prem Chopra 13 M, Tanuja Trivedi 30 F, Manoj Sharma 40 M, John Trevor 70 M, Alicia Sliver 17 F]
+Name - Ram</pre>
+<p><strong>Few Notes :</strong></p>
+<p>Lambda expression allows you to reduce code compared to anonymous class to pass behaviors to methods, method reference goes one step further. It reduces code written in a lambda expression to make it even more readable and concise. You use lambda expressions to create anonymous methods. Sometimes, however, a lambda expression does nothing but call an existing method. In those cases, it&#39;s often clearer to refer to the existing method by name. Method references enable you to do this; they are compact, easy-to-read lambda expressions for methods that already have a name.</p>
+<p>One of the most popular examples of method reference is List.forEach(System.out::println), which prints each element into the console. If you analyze this statement from the very beginning, you will understand how lambda expression and further method reference has reduced the number of lines of code.</p>
+<p><strong>Before Java 8, to display all elements from List</strong></p>
+<pre>List listOfOrders = getOrderBook();
+for(Order order : listOfOrders){
+   System.out.println(order);
+}</pre>
+<p><strong>In Java 8, after using lambda expression</strong></p>
+<pre>listOfOrders.forEach((Order o) -&gt; System.out.println(o));</pre>
+<p><strong>Further reduction in code by let compiler infer types</strong></p>
+<pre>listOfOrders.forEach(System.out.println(o));</pre>
+<p><br>and Now, since this lambda expression is not doing anything and just a calling a method, it can be replaced by method reference, as shown below:<br></p>
+<pre>orderBook.forEach(System.out::println);</pre>
+<p><br>This is the most concise way of printing all elements of a list.  Since println() is a non-static instance method, this is known as instance method reference in Java 8.</p>
+<p>The equivalent lambda expression for the method reference String::compareToIgnoreCase would have the formal parameter list (String a, String b), where a and b are arbitrary names used to better describe this example. The method reference would invoke the method a.compareToIgnoreCase(b). If you want more examples, I suggest you reading <a href="http://www.amazon.com/Java-SE8-Really-Impatient-Course/dp/0321927761?tag=javamysqlanta-20" target="_blank">Java SE 8 for really impatient</a> by Cay S. Horstmann, one of the best book to learn Java 8 feature.<br></p>
+<p><strong>Points to remember about Method Reference in Java 8</strong></p>
+<p>1) There are four types of method reference in Java 8, namely reference to static method, reference to an instance method of a particular object, reference to a constructor and reference to an instance method of an arbitrary object of a particular type. In our example, the method reference <strong>Order::compareByQuantity</strong> is a reference to a static method.</p>
+<p>2) The double colon operator (::) is used for the method or constructor reference in Java. This same symbol is used scope resolution operator in C++ but that has nothing to do with method reference.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="References:" duration="0">
+        <ol type="1" start="1">
+<li>Oracle JDK - 8 JSR release Docs</li>
+<li>JDK classes under Java main package (src  folder)</li>
+<li><a href="https://www.baeldung.com/" target="_blank">https://www.baeldung.com/</a></li>
+<li><a href="https://winterbe.com" target="_blank">https://winterbe.com</a></li>
+<li><a href="https://www.wikipedia.org/" target="_blank">https://www.wikipedia.org/</a></li>
+<li><a href="https://www.javatpoint.com/" target="_blank">https://www.javatpoint.com/</a></li>
+<li><a href="https://dzone.com/java-jdk-development-tutorials-tools-news" target="_blank">https://dzone.com/java-jdk-development-tutorials-tools-news</a></li>
+<li><a href="https://www.javaworld.com/" target="_blank">https://www.javaworld.com/</a></li>
+<li><a href="https://geeksforgeek.org/" target="_blank">https://Geeksforgeeks.org/</a></li>
+<li> <a href="https://javabrains.io/" target="_blank">https://javabrains.io/</a></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-49880327-14', 'auto');
+
+    (function() {
+      var gaCodelab = '';
+      if (gaCodelab) {
+        ga('create', gaCodelab, 'auto', {name: 'codelab'});
+      }
+
+      var gaView;
+      var parts = location.search.substring(1).split('&');
+      for (var i = 0; i < parts.length; i++) {
+        var param = parts[i].split('=');
+        if (param[0] === 'viewga') {
+          gaView = param[1];
+          break;
+        }
+      }
+      if (gaView && gaView !== gaCodelab) {
+        ga('create', gaView, 'auto', {name: 'view'});
+      }
+    })();
+  </script>
+
+</body>
+</html>
